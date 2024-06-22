@@ -1,0 +1,23 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    text-align: center;
+}
+
+#taskForm {
+    margin: 20px;
+    text-align: center;
+}
+
+#taskList {
+    list-style: none;
+    padding: 0;
+}
+
+#taskList li {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
