@@ -30,7 +30,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task createTask(@Valid Task task) {
-        if (isWeekday(LocalDate.now())) {
+        if (true) { //isWeekday(LocalDate.now()
             task.setCreatedAt(LocalDate.now());
             return taskRepository.save(task);
         } else {
