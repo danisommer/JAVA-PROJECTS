@@ -135,21 +135,3 @@ li.completed {
 .edit-button, .delete-button {
     transition: background-color 0.3s ease;
 }
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
-
-.task-added {
-    animation: fadeIn 0.5s ease forwards;
-}
-
-.task-deleted {
-    animation: fadeOut 0.5s ease forwards;
-}
