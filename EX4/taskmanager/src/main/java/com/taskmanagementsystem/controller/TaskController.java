@@ -16,7 +16,11 @@ import java.util.List;
 public class TaskController {
 
     @Autowired
-    private TaskService taskService;
+    private final TaskService taskService;
+
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
 
     @GetMapping
     public List<Task> getAllTasks() {
@@ -42,6 +46,16 @@ public class TaskController {
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @Valid @RequestBody Task task) {
         try {
             Task updatedTask = taskService.updateTask(id, task);
+            return ResponseEntity.ok(updatedTask);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Task> updateTaskStatus(@PathVariable Long id, @Valid @RequestBody Task task) {
+        try {
+            Task updatedTask = taskService.updateTaskStatus(id, task);
             return ResponseEntity.ok(updatedTask);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(null);

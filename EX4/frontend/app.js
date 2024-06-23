@@ -9,38 +9,71 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const renderTasks = () => {
         taskList.innerHTML = '';
-
+    
         tasks.forEach((task, index) => {
             const li = document.createElement('li');
-            li.textContent = `${task.title} - ${task.description}`;
+            const formattedDate = new Date(task.createdAt).toLocaleDateString();
+            li.innerHTML = `
+                <div>
+                    <strong>${task.title}</strong> - ${task.description}
+                    <div>
+                        <small>Created on: ${formattedDate}</small>
+                    </div>
+                    <div>
+                        <small>Status: ${task.status}</small>
+                    </div>
+                </div>
+            `;
             li.className = task.status.toLowerCase();
-
+    
             const buttonContainer = document.createElement('div');
             buttonContainer.classList.add('button-container');
-
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete';
-            deleteButton.className = 'delete-button';
-            deleteButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                deleteTask(index, task.id);
-            });
-
-            const editButton = document.createElement('button');
-            editButton.textContent = 'Edit';
-            editButton.className = 'edit-button';
-            editButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                startEditTask(index, task);
-            });
-
-            buttonContainer.appendChild(editButton);
-            buttonContainer.appendChild(deleteButton);
+    
+            if (task.status === 'PENDING') {
+                const startButton = document.createElement('button');
+                startButton.textContent = 'Start Task';
+                startButton.className = 'start-button';
+                startButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleStatus(index, task.id, 'PENDING');
+                });
+                buttonContainer.appendChild(startButton);
+    
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.className = 'edit-button';
+                editButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    startEditTask(index, task);
+                });
+                buttonContainer.appendChild(editButton);
+    
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.className = 'delete-button';
+                deleteButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteTask(index, task.id);
+                });
+                buttonContainer.appendChild(deleteButton);
+            }
+    
+            if (task.status === 'IN_PROGRESS') {
+                const completeCheckbox = document.createElement('input');
+                completeCheckbox.type = 'checkbox';
+                completeCheckbox.className = 'complete-checkbox';
+                completeCheckbox.addEventListener('change', (e) => {
+                    e.stopPropagation();
+                    toggleStatus(index, task.id, 'IN_PROGRESS');
+                });
+                buttonContainer.appendChild(completeCheckbox);
+            }
+    
             li.appendChild(buttonContainer);
-
             taskList.appendChild(li);
         });
     };
+    
 
     function filterTasks(searchTerm) {
         const filteredTasks = tasks.filter(task => {
@@ -53,15 +86,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateTaskList(filteredTasks) {
         taskList.innerHTML = '';
-
+    
         filteredTasks.forEach((task, index) => {
             const li = document.createElement('li');
-            li.textContent = `${task.title} - ${task.description}`;
+            const formattedDate = new Date(task.createdAt).toLocaleDateString();
+            li.innerHTML = `
+                <div>
+                    <strong>${task.title}</strong> - ${task.description}
+                    <div>
+                        <small>Created on: ${formattedDate}</small>
+                    </div>
+                    <div>
+                        <small>Status: ${task.status}</small>
+                    </div>
+                </div>
+            `;
             li.className = task.status.toLowerCase();
-
+    
             const buttonContainer = document.createElement('div');
             buttonContainer.classList.add('button-container');
-
+    
+            if (task.status === 'PENDING') {
+                const startButton = document.createElement('button');
+                startButton.textContent = 'Start Task';
+                startButton.className = 'start-button';
+                startButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleStatus(index, task.id, 'PENDING');
+                });
+                buttonContainer.appendChild(startButton);
+            }
+    
+            if (task.status === 'IN_PROGRESS') {
+                const completeCheckbox = document.createElement('input');
+                completeCheckbox.type = 'checkbox';
+                completeCheckbox.className = 'complete-checkbox';
+                completeCheckbox.addEventListener('change', (e) => {
+                    e.stopPropagation();
+                    toggleStatus(index, task.id, 'IN_PROGRESS');
+                });
+                buttonContainer.appendChild(completeCheckbox);
+            }
+    
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
             deleteButton.className = 'delete-button';
@@ -69,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.stopPropagation();
                 deleteTask(tasks.findIndex(t => t.id === task.id), task.id);
             });
-
+    
             const editButton = document.createElement('button');
             editButton.textContent = 'Edit';
             editButton.className = 'edit-button';
@@ -77,11 +143,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.stopPropagation();
                 startEditTask(tasks.findIndex(t => t.id === task.id), task);
             });
-
+    
+            deleteButton.removeEventListener('click', deleteTask);
+            editButton.removeEventListener('click', startEditTask);
+    
             buttonContainer.appendChild(editButton);
             buttonContainer.appendChild(deleteButton);
             li.appendChild(buttonContainer);
-
+    
             taskList.appendChild(li);
         });
     }
@@ -99,7 +168,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     searchInput.addEventListener('input', handleSearchInput);
 
-    
     function startEditTask(index, task) {
         editIndex = index;
     
@@ -122,7 +190,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-
     function confirmEditTask(index, taskId) {
         const title = document.getElementById('editTitle').value;
         const description = document.getElementById('editDescription').value;
@@ -142,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to update task');
+                throw new Error("Tasks can only be updated if they're in a pending status.");
             }
             return response.json();
         })
@@ -151,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
             editIndex = null;
             renderTasks();
         })
-        .catch(error => console.error('Error updating task:', error));
+        .catch(error => displayError(error.message));
     }
 
     function cancelEditTask() {
@@ -166,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 tasks = data;
                 renderTasks();
             })
-            .catch(error => console.error('Error fetching tasks:', error));
+            .catch(error => displayError('Error fetching tasks: ' + error.message));
     }
 
     function toggleStatus(index, taskId, currentStatus) {
@@ -187,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
             status: newStatus
         };
 
-        fetch(`${apiUrl}/${taskId}`, {
+        fetch(`${apiUrl}/${taskId}/status`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -196,7 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to update task');
+                throw new Error("Task status failed to be updated.");
             }
             return response.json();
         })
@@ -204,7 +271,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tasks[index] = data;
             renderTasks();
         })
-        .catch(error => console.error('Error updating task:', error));
+        .catch(error => displayError(error.message));
     }
 
     function deleteTask(index, taskId) {
@@ -213,12 +280,12 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to delete task');
+                throw new Error("Tasks can't be deleted unless they're pending and older than 5 days.");
             }
             tasks.splice(index, 1);
             renderTasks();
         })
-        .catch(error => console.error('Error deleting task:', error));
+        .catch(error => displayError(error.message));
     }
 
     taskForm.addEventListener('submit', function(e) {
@@ -242,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to create task');
+                throw new Error("Tasks can only be created during weekdays.");
             }
             return response.json();
         })
@@ -252,8 +319,14 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('description').value = '';
             renderTasks();
         })
-        .catch(error => console.error('Error creating task:', error));
+        .catch(error => displayError(error.message));
     });
+
+    function displayError(message) {
+        const errorContainer = document.getElementById('errorContainer');
+        errorContainer.textContent = message;
+        errorContainer.style.display = 'block';
+    }
 
     fetchTasks();
 });

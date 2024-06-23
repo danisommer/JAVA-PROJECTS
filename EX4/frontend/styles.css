@@ -72,9 +72,6 @@ ul {
     padding: 0;
 }
 
-
-
-
 li button {
     margin-left: 10px;
     padding: 5px 10px;
@@ -95,7 +92,6 @@ li {
 }
 
 li.completed {
-    text-decoration: line-through;
     background-color: #d9f7be;
 }
 

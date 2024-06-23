@@ -1,6 +1,7 @@
 package com.taskmanagementsystem.service;
 
 import com.taskmanagementsystem.model.Task;
+import jakarta.validation.Valid;
 
 import java.time.LocalDate;
 import java.util.Date;
@@ -13,6 +14,8 @@ public interface TaskService {
     Task createTask(Task task);
 
     Task updateTask(Long id, Task task);
+
+    Task updateTaskStatus(Long id, @Valid Task task);
 
     void deleteTask(Long id);
 

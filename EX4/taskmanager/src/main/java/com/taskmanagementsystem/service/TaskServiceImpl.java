@@ -17,7 +17,11 @@ import java.util.Optional;
 public class TaskServiceImpl implements TaskService {
 
     @Autowired
-    private TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
+
+    public TaskServiceImpl(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
 
     @Override
     public List<Task> getAllTasks() {
@@ -46,6 +50,18 @@ public class TaskServiceImpl implements TaskService {
             } else {
                 throw new IllegalArgumentException("Tasks can only be updated if they are in PENDING status.");
             }
+        } else {
+            throw new IllegalArgumentException("Task not found with ID: " + id);
+        }
+    }
+
+    @Override
+    public Task updateTaskStatus(Long id, @Valid Task task){
+        Optional<Task> existingTaskOptional = taskRepository.findById(id);
+        if (existingTaskOptional.isPresent()) {
+            Task existingTask = existingTaskOptional.get();
+            existingTask.setStatus(task.getStatus());
+            return taskRepository.save(existingTask);
         } else {
             throw new IllegalArgumentException("Task not found with ID: " + id);
         }
