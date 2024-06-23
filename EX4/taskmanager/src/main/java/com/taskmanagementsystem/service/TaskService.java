@@ -23,4 +23,5 @@ public interface TaskService {
     List<Task> findTasksCreatedAfter(Date date);
 
     List<Task> findTasksCreatedAfter(LocalDate date);
+
 }

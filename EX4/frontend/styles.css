@@ -18,9 +18,22 @@ h1 {
     text-align: center;
 }
 
+.searchContainer {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.searchContainer input[type="text"] {
+    flex: 1; 
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px; 
+}
+
 form {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     margin-bottom: 20px;
 }
@@ -31,20 +44,27 @@ form input[type="text"] {
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    margin-right: 10px;
+    display: inline-block; 
+    height: 20px;
 }
 
 form button {
     padding: 8px 16px;
     font-size: 16px;
-    background-color: #4CAF50;
+    background-color: #4c57af;
     color: #fff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    display: inline-block; 
+    height: 40px;
+    white-space: nowrap;
+    text-align: center;
 }
 
 form button:hover {
-    background-color: #45a049;
+    background-color: #454ca0;
 }
 
 ul {
@@ -52,15 +72,88 @@ ul {
     padding: 0;
 }
 
+
+
+
+li button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
 li {
     background-color: #f9f9f9;
     margin-bottom: 10px;
     padding: 10px;
     border-radius: 4px;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
     cursor: pointer;
 }
 
 li.completed {
     text-decoration: line-through;
     background-color: #d9f7be;
+}
+
+
+.delete-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f;
+}
+
+.edit-button {
+    background-color: #2196F3;
+    color: white;
+}
+
+.edit-button:hover {
+    background-color: #1976D2;
+}
+
+.confirm-edit-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.confirm-edit-button:hover {
+    background-color: #388E3C;
+}
+
+.cancel-edit-button {
+    background-color: #9E9E9E;
+    color: white;
+}
+
+.cancel-edit-button:hover {
+    background-color: #757575;
+}
+
+.edit-button, .delete-button {
+    transition: background-color 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.task-added {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+.task-deleted {
+    animation: fadeOut 0.5s ease forwards;
 }

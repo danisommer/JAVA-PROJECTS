@@ -26,12 +26,12 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task createTask(@Valid Task task) {
-        //if (isWeekday(LocalDate.now())) {
+        if (isWeekday(LocalDate.now())) {
             task.setCreatedAt(LocalDate.now());
             return taskRepository.save(task);
-        //} else {
-        //    throw new IllegalArgumentException("Tasks can only be created on weekdays (Monday to Friday).");
-        //}
+        } else {
+            throw new IllegalArgumentException("Tasks can only be created on weekdays (Monday to Friday).");
+        }
     }
 
     @Override
@@ -56,11 +56,11 @@ public class TaskServiceImpl implements TaskService {
         Optional<Task> existingTaskOptional = taskRepository.findById(id);
         if (existingTaskOptional.isPresent()) {
             Task existingTask = existingTaskOptional.get();
-            //if (existingTask.getStatus() == Task.TaskStatus.PENDING && isOlderThanFiveDays(existingTask.getCreatedAt())) {
+            if (existingTask.getStatus() == Task.TaskStatus.PENDING && isOlderThanFiveDays(existingTask.getCreatedAt())) {
                 taskRepository.delete(existingTask);
-            //} else {
-            //    throw new IllegalArgumentException("Tasks can only be deleted if they are in PENDING status and created more than 5 days ago.");
-            //}
+            } else {
+                throw new IllegalArgumentException("Tasks can only be deleted if they are in PENDING status and created more than 5 days ago.");
+            }
         } else {
             throw new IllegalArgumentException("Task not found with ID: " + id);
         }
@@ -86,6 +86,7 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> findTasksCreatedAfter(LocalDate date) {
         return taskRepository.findByCreatedAtAfter(date);
     }
+
 
     private boolean isWeekday(LocalDate date) {
         DayOfWeek dayOfWeek = date.getDayOfWeek();
