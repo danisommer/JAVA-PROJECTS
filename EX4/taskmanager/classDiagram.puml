@@ -1,0 +1,82 @@
+@startuml
+
+package "com.taskmanagementsystem" {
+    class TaskManagementSystemApplication
+
+    class WebConfig {
+        + void addCorsMappings(CorsRegistry)
+    }
+}
+
+package "com.taskmanagementsystem.controller" {
+    class TaskController {
+        - TaskService taskService
+        + List<Task> getAllTasks()
+        + Task getTaskById(Long id)
+        + ResponseEntity<Task> createTask(Task task)
+        + ResponseEntity<Task> updateTask(Long id, Task task)
+        + ResponseEntity<Task> updateTaskStatus(Long id, Task task)
+        + ResponseEntity<Void> deleteTask(Long id)
+        + List<Task> findTasksByStatus(Task.TaskStatus status)
+        + List<Task> findTasksCreatedAfter(LocalDate date)
+    }
+}
+
+package "com.taskmanagementsystem.service" {
+    interface TaskService {
+        + List<Task> getAllTasks()
+        + Task createTask(Task task)
+        + Task updateTask(Long id, Task task)
+        + Task updateTaskStatus(Long id, Task task)
+        + void deleteTask(Long id)
+        + Task getTaskById(Long id)
+        + List<Task> findTasksByStatus(Task.TaskStatus status)
+        + List<Task> findTasksCreatedAfter(LocalDate date)
+    }
+
+    class TaskServiceImpl {
+        - TaskRepository taskRepository
+        - EmailService emailService
+        + List<Task> getAllTasks()
+        + Task createTask(Task task)
+        + Task updateTask(Long id, Task task)
+        + Task updateTaskStatus(Long id, Task task)
+        + void deleteTask(Long id)
+        + Task getTaskById(Long id)
+        + List<Task> findTasksByStatus(Task.TaskStatus status)
+        + List<Task> findTasksCreatedAfter(LocalDate date)
+        - boolean isWeekday(LocalDate date)
+        - boolean isOlderThanFiveDays(LocalDate createdAt)
+        - void sendTaskReminderNotification(Task task)
+    }
+
+    class EmailService {
+        - JavaMailSender javaMailSender
+        + void sendEmail(String to, String subject, String text)
+    }
+}
+
+package "com.taskmanagementsystem.model" {
+    enum TaskStatus {
+        PENDING
+        IN_PROGRESS
+        COMPLETED
+    }
+
+    class Task {
+        - Long id
+        - String title
+        - String description
+        - LocalDate createdAt
+        - TaskStatus status
+        + getters/setters
+    }
+}
+
+TaskService <|.. TaskServiceImpl
+TaskController --> TaskService
+TaskServiceImpl --> EmailService
+TaskManagementSystemApplication --> TaskController
+WebConfig --> TaskController
+
+@enduml
