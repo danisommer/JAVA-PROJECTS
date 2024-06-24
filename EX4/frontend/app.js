@@ -11,6 +11,7 @@
 /* search term.                                                               */
 /*============================================================================*/
 
+
 document.addEventListener("DOMContentLoaded", function () {
   const taskForm = document.getElementById("taskForm");
   const taskList = document.getElementById("taskList");
