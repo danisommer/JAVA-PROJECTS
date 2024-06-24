@@ -355,9 +355,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((error) => displayError(error.message));
   }
   
-  
-
-
   function fetchTasks() {
     fetch(apiUrl)
       .then((response) => response.json())
