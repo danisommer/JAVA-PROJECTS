@@ -19,6 +19,9 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private final TaskRepository taskRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public TaskServiceImpl(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
@@ -30,7 +33,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task createTask(@Valid Task task) {
-        if (true) { //isWeekday(LocalDate.now()
+        if (isWeekday(LocalDate.now())) {
             task.setCreatedAt(LocalDate.now());
             return taskRepository.save(task);
         } else {
@@ -56,15 +59,28 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task updateTaskStatus(Long id, @Valid Task task){
+    public Task updateTaskStatus(Long id, @Valid Task task) {
         Optional<Task> existingTaskOptional = taskRepository.findById(id);
         if (existingTaskOptional.isPresent()) {
             Task existingTask = existingTaskOptional.get();
             existingTask.setStatus(task.getStatus());
-            return taskRepository.save(existingTask);
+            Task updatedTask = taskRepository.save(existingTask);
+            if (task.getStatus() == Task.TaskStatus.PENDING) {
+                sendTaskReminderNotification(existingTask);
+            }
+
+            return updatedTask;
         } else {
             throw new IllegalArgumentException("Task not found with ID: " + id);
         }
+    }
+
+    private void sendTaskReminderNotification(Task task) {
+        String email = "danibee2005@gmail.com";
+        String subject = "Reminder: Pending Task";
+        String text = "You have a pending task: " + task.getTitle();
+
+        emailService.sendEmail(email, subject, text);
     }
 
     @Override
@@ -91,11 +107,6 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public List<Task> findTasksByStatus(Task.TaskStatus status) {
         return taskRepository.findByStatus(status);
-    }
-
-    @Override
-    public List<Task> findTasksCreatedAfter(Date date) {
-        return List.of();
     }
 
     @Override

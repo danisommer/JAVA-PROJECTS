@@ -31,6 +31,23 @@ h1 {
     border-radius: 4px 0 0 4px; 
 }
 
+.searchContainer button {
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #4c57af;
+    color: #fff;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+
+}
+
+.searchContainer button:hover {
+    background-color: #454ca0;
+    transform: scale(1.05);
+}
+
 form {
     display: flex;
     justify-content: space-around;
@@ -78,6 +95,7 @@ li button {
     border: none;
     cursor: pointer;
     border-radius: 3px;
+    transition: background-color 0.3s ease;
 }
 
 li {
@@ -95,6 +113,14 @@ li.completed {
     background-color: #d9f7be;
 }
 
+.start-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.start-button:hover {
+    background-color: #388E3C;
+}
 
 .delete-button {
     background-color: #f44336;
@@ -134,4 +160,44 @@ li.completed {
 
 .edit-button, .delete-button {
     transition: background-color 0.3s ease;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.pageButtonActive {
+    padding: 5px 13px;
+    font-size: 16px;
+    border: 1px solid #4c57af;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0 5px;
+    background-color: #4c57af;
+    color: #fff;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
+}       
+
+.pageButtonActive:hover {
+    background-color: #454ca0;
+}
+
+.pageButton {
+    padding: 5px 13px;
+    font-size: 16px;
+    background-color: #f0f0f0;
+    color: #4c57af;
+    border: 1px solid #4c57af;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0 5px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+
+}
+
+.pageButton:hover {
+    background-color: #e0e0e0;
 }

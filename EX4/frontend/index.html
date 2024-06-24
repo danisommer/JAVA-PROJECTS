@@ -12,15 +12,34 @@
         <h1>Task Manager</h1>
         <div class="searchContainer">
             <input type="text" id="searchInput" placeholder="Search tasks...">
+            
+            <!--
+            <button id="filterButton">Filter</button>
+            <div id="filterOptions" class="filter-options">
+                <label for="statusFilter">Status:</label>
+                <select id="statusFilter">
+                    <option value="">All</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="COMPLETED">Completed</option>
+                </select>
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate">
+                <button id="applyFilter">Apply</button>
+            </div>
+            -->
         </div>
         <form id="taskForm">
             <input type="text" id="title" placeholder="Enter task title" required>
             <input type="text" id="description" placeholder="Enter task description" required>
             <button type="submit">Add Task</button>
         </form>
+        <div id="errorContainer" style="display:none; color:red;"></div>
+
 
         <ul id="taskList"></ul>
-
     </div>
 
     <script src="app.js"></script>

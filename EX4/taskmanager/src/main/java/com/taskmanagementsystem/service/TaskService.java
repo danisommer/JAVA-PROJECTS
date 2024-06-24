@@ -23,8 +23,6 @@ public interface TaskService {
 
     List<Task> findTasksByStatus(Task.TaskStatus status);
 
-    List<Task> findTasksCreatedAfter(Date date);
-
     List<Task> findTasksCreatedAfter(LocalDate date);
 
 }
