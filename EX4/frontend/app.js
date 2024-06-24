@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const filterStartDate = document.getElementById("startDate");
   const filterEndDate = document.getElementById("endDate");
   const filterApply = document.getElementById("applyFilter");
+  const clearFilters = document.getElementById("clearFilter");
 
   const apiUrl = "http://localhost:8080/api/tasks";
   const tasksPerPage = 5;
@@ -50,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     let startIndex = (currentPage - 1) * tasksPerPage;
     let tasksToDisplay = [];
-  
+    
     if (searchTerm.length === 0 && !filterApplied) {
       let endIndex = startIndex + tasksPerPage;
       tasksToDisplay = tasks.slice(startIndex, endIndex);
@@ -60,10 +61,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   
     tasksToDisplay.forEach((task, localIndex) => {
-      const globalIndex = searchTerm.length === 0 ? startIndex + localIndex : tasks.indexOf(task);
-  
+      const globalIndex = tasks.indexOf(task);
+    
       const li = document.createElement("li");
-      const formattedDate = new Date(task.createdAt).toLocaleDateString(undefined, dateOptions);;
+      const formattedDate = new Date(task.createdAt).toLocaleDateString(undefined, dateOptions);
       li.innerHTML = `
         <div>
           <strong>${task.title}</strong> - ${task.description}
@@ -76,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
       `;
       li.className = task.status.toLowerCase();
-  
+    
       const buttonContainer = document.createElement("div");
       buttonContainer.classList.add("button-container");
   
@@ -157,6 +158,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  function clearFilterOptions() {
+    filterStatus.value = "ALL";
+    filterStartDate.value = "";
+    filterEndDate.value = "";
+    filterApplied = false;
+    searchTerm = "";
+    renderTaskList();
+  }
+
+  clearFilters.addEventListener("click", clearFilterOptions);
+
   function filterByStatus(localTasks, status) {
     return localTasks.filter((task) => task.status === status);
   }
@@ -175,7 +187,7 @@ document.addEventListener("DOMContentLoaded", function () {
   
     let filteredTasks = tasks;
   
-    if (status !== "ALL") {
+    if (status != "ALL") {
       filteredTasks = filterByStatus(filteredTasks, status);
     }
   
@@ -303,7 +315,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function toggleStatus(index, taskId, currentStatus) {
     if (editIndex !== null) return;
-
+  
     let newStatus;
     if (currentStatus === "PENDING") {
       newStatus = "IN_PROGRESS";
@@ -312,13 +324,13 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
       newStatus = "PENDING";
     }
-
+  
     const updatedTask = {
       title: tasks[index].title,
       description: tasks[index].description,
       status: newStatus,
     };
-
+  
     fetch(`${apiUrl}/${taskId}/status`, {
       method: "PUT",
       headers: {
@@ -333,16 +345,12 @@ document.addEventListener("DOMContentLoaded", function () {
         return response.json();
       })
       .then((data) => {
-        tasks[index].status = newStatus; 
-        if (searchTerm.length === 0) {
-          renderTaskList();
-        } else {
-          const filteredTasks = filterTasks(searchTerm);
-          renderTaskList(filteredTasks);
-        }
+        tasks[index].status = newStatus;
+        renderTaskList(filterTasks(searchTerm));
       })
       .catch((error) => displayError(error.message));
   }
+  
 
 
   function fetchTasks() {
