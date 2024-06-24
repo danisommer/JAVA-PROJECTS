@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const taskForm = document.getElementById("taskForm");
   const taskList = document.getElementById("taskList");
   const searchInput = document.getElementById("searchInput");
+  const pageSelector = document.getElementById("pageSelector");
   const apiUrl = "http://localhost:8080/api/tasks";
   const tasksPerPage = 5;
 
@@ -12,87 +13,87 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function renderTaskList(filteredTasks) {
     taskList.innerHTML = "";
-
-    let startIndex;
-    let endIndex;
-    let tasksToDisplay;
-
+    pageSelector.innerHTML = "";
+    displayError();
+    
+    let startIndex = (currentPage - 1) * tasksPerPage;
+    let tasksToDisplay = [];
+  
     if (searchTerm.length === 0) {
-      startIndex = (currentPage - 1) * tasksPerPage;
-      endIndex = startIndex + tasksPerPage;
-      tasksToDisplay = (filteredTasks || tasks).slice(startIndex, endIndex);
+      let endIndex = startIndex + tasksPerPage;
+      tasksToDisplay = tasks.slice(startIndex, endIndex);
+      renderPaginationControls();
     } else {
       tasksToDisplay = filteredTasks;
     }
-
-    tasksToDisplay.forEach((task, index) => {
+  
+    tasksToDisplay.forEach((task, localIndex) => {
+      const globalIndex = searchTerm.length === 0 ? startIndex + localIndex : tasks.indexOf(task);
+  
       const li = document.createElement("li");
       const formattedDate = new Date(task.createdAt).toLocaleDateString();
       li.innerHTML = `
-                      <div>
-                          <strong>${task.title}</strong> - ${task.description}
-                          <div>
-                              <small>Created on: ${formattedDate}</small>
-                          </div>
-                          <div>
-                              <small>Status: ${task.status}</small>
-                          </div>
-                      </div>
-                  `;
+        <div>
+          <strong>${task.title}</strong> - ${task.description}
+          <div>
+            <small>Created on: ${formattedDate}</small>
+          </div>
+          <div>
+            <small>Status: ${task.status}</small>
+          </div>
+        </div>
+      `;
       li.className = task.status.toLowerCase();
-
+  
       const buttonContainer = document.createElement("div");
       buttonContainer.classList.add("button-container");
-
+  
       if (task.status === "PENDING") {
         const startButton = document.createElement("button");
         startButton.textContent = "Start Task";
         startButton.className = "start-button";
         startButton.addEventListener("click", (e) => {
           e.stopPropagation();
-          toggleStatus(index, task.id, "PENDING");
+          toggleStatus(globalIndex, task.id, "PENDING");
         });
         buttonContainer.appendChild(startButton);
-
+  
         const editButton = document.createElement("button");
         editButton.textContent = "Edit";
         editButton.className = "edit-button";
         editButton.addEventListener("click", (e) => {
           e.stopPropagation();
-          startEditTask(index, task);
+          startEditTask(globalIndex, task);
         });
         buttonContainer.appendChild(editButton);
-
+  
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete";
         deleteButton.className = "delete-button";
         deleteButton.addEventListener("click", (e) => {
           e.stopPropagation();
-          deleteTask(index, task.id);
+          deleteTask(globalIndex, task.id);
         });
         buttonContainer.appendChild(deleteButton);
       }
-
+  
       if (task.status === "IN_PROGRESS") {
         const completeCheckbox = document.createElement("input");
         completeCheckbox.type = "checkbox";
         completeCheckbox.className = "complete-checkbox";
         completeCheckbox.addEventListener("change", (e) => {
           e.stopPropagation();
-          toggleStatus(index, task.id, "IN_PROGRESS");
+          toggleStatus(globalIndex, task.id, "IN_PROGRESS");
         });
         buttonContainer.appendChild(completeCheckbox);
       }
-
+  
       li.appendChild(buttonContainer);
       taskList.appendChild(li);
     });
-
-    if (searchTerm.length === 0) {
-      renderPaginationControls();
-    }
   }
-
+  
+  
   function renderPaginationControls() {
     const totalPages = Math.ceil(tasks.length / tasksPerPage);
 
@@ -109,8 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
       paginationContainer.appendChild(button);
     }
-
-    taskList.appendChild(paginationContainer);
+    pageSelector.appendChild(paginationContainer);
   }
 
   function filterTasks(searchTerm) {
@@ -151,52 +151,54 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function startEditTask(index, task) {
     editIndex = index;
-
-    const li = taskList.children[index];
-
-    li.querySelectorAll("button").forEach((button) => {
+  
+    const globalIndex = index % tasksPerPage;
+    const li = taskList.children[globalIndex];
+  
+    if (!li) {
+      console.error("Element not found at the specified index");
+      return;
+    }
+  
+    const buttons = li.querySelectorAll("button");
+    if (buttons.length === 0) {
+      console.error("Buttons not found within the task element");
+      return;
+    }
+  
+    buttons.forEach((button) => {
       button.disabled = true;
     });
-
+  
     li.innerHTML = `
-            <input type="text" id="editTitle" value="${task.title}">
-            <input type="text" id="editDescription" value="${task.description}">
-            <div class="button-container">
-                <button id="cancelEdit" class="cancel-edit-button">Cancel</button>
-                <button id="confirmEdit" class="confirm-edit-button">Confirm</button>
-            </div>
-        `;
-
+      <input type="text" id="editTitle" value="${task.title}">
+      <input type="text" id="editDescription" value="${task.description}">
+      <div class="button-container">
+        <button id="cancelEdit" class="cancel-edit-button">Cancel</button>
+        <button id="confirmEdit" class="confirm-edit-button">Confirm</button>
+      </div>
+    `;
+  
     document.getElementById("confirmEdit").addEventListener("click", () => {
       confirmEditTask(index, task.id);
     });
-
+  
     document.getElementById("cancelEdit").addEventListener("click", () => {
       cancelEditTask();
     });
   }
-
-
-  function cancelEditTask() {
-    editIndex = null;
-    if (searchTerm.length === 0) {
-      renderTaskList();
-    } else {
-      const filteredTasks = filterTasks(searchTerm);
-      renderTaskList(filteredTasks);
-    }
-  }
+  
 
   function confirmEditTask(index, taskId) {
     const title = document.getElementById("editTitle").value;
     const description = document.getElementById("editDescription").value;
-
+  
     const updatedTask = {
       title: title,
       description: description,
       status: tasks[index].status,
     };
-
+  
     fetch(`${apiUrl}/${taskId}`, {
       method: "PUT",
       headers: {
@@ -214,6 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then((data) => {
         tasks[index] = { ...tasks[index], title, description }; 
+        editIndex = null; 
         if (searchTerm.length === 0) {
           renderTaskList();
         } else {
@@ -222,6 +225,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       })
       .catch((error) => displayError(error.message));
+  }
+  
+  function cancelEditTask() {
+    editIndex = null;
+    if (searchTerm.length === 0) {
+      renderTaskList();
+    } else {
+      const filteredTasks = filterTasks(searchTerm);
+      renderTaskList(filteredTasks);
+    }
   }
 
   function toggleStatus(index, taskId, currentStatus) {
