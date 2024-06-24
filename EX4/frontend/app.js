@@ -17,6 +17,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const taskList = document.getElementById("taskList");
   const searchInput = document.getElementById("searchInput");
   const pageSelector = document.getElementById("pageSelector");
+
+  const filterStatus = document.getElementById("statusFilter");
+  const filterStartDate = document.getElementById("startDate");
+  const filterEndDate = document.getElementById("endDate");
+  const filterApply = document.getElementById("applyFilter");
+
   const apiUrl = "http://localhost:8080/api/tasks";
   const tasksPerPage = 5;
   const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'UTC' };
@@ -34,6 +40,8 @@ document.addEventListener("DOMContentLoaded", function () {
   let tasks = [];
   let editIndex = null;
   let searchTerm = "";
+  let filterApplied = false;
+
 
   function renderTaskList(filteredTasks) {
     taskList.innerHTML = "";
@@ -43,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let startIndex = (currentPage - 1) * tasksPerPage;
     let tasksToDisplay = [];
   
-    if (searchTerm.length === 0) {
+    if (searchTerm.length === 0 && !filterApplied) {
       let endIndex = startIndex + tasksPerPage;
       tasksToDisplay = tasks.slice(startIndex, endIndex);
       renderPaginationControls();
@@ -149,16 +157,48 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  function filterByStatus(status) {
-    return tasks.filter((task) => task.status === status);
+  function filterByStatus(localTasks, status) {
+    return localTasks.filter((task) => task.status === status);
   }
 
-  function filterByPeriod(startDate, endDate) {
-    return tasks.filter((task) => {
+  function filterByPeriod(localTasks, startDate, endDate) {
+    return localTasks.filter((task) => {
       const taskDate = new Date(task.createdAt);
-      return taskDate >= startDate && taskDate <= endDate;
+      return (!startDate || taskDate >= startDate) && (!endDate || taskDate <= endDate);
     });
   }
+
+  function handleFilterOptions() {
+    const status = filterStatus.value;
+    const startDate = filterStartDate.value ? new Date(filterStartDate.value) : null;
+    const endDate = filterEndDate.value ? new Date(filterEndDate.value) : null;
+  
+    let filteredTasks = tasks;
+  
+    if (status !== "ALL") {
+      filteredTasks = filterByStatus(filteredTasks, status);
+    }
+  
+    if (startDate && endDate) {
+      filteredTasks = filterByPeriod(filteredTasks, startDate, endDate);
+    } else {
+      if (startDate) {
+        filteredTasks = filterByPeriod(filteredTasks, startDate, null);
+      }
+  
+      if (endDate) {
+        filteredTasks = filterByPeriod(filteredTasks, null, endDate);
+      }
+    }
+  
+    renderTaskList(filteredTasks);
+  }
+
+
+  filterApply.addEventListener("click", function() {
+    filterApplied = true;
+    handleFilterOptions();
+  });
 
   function handleSearchInput() {
     searchTerm = searchInput.value.trim();
