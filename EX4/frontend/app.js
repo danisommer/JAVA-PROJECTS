@@ -344,29 +344,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((error) => displayError(error.message));
   }
 
-  function updateTasks() {
-    fetch(apiUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch tasks");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        tasks = data;
-        if (editIndex !== null) {
-          startEditTask(editIndex, tasks[editIndex]);
-        } else {
-          if (searchTerm.length === 0) {
-            renderTaskList();
-          } else {
-            const filteredTasks = filterTasks(searchTerm);
-            renderTaskList(filteredTasks);
-          }
-        }
-      })
-      .catch((error) => displayError("Error fetching tasks: " + error.message));
-  }
 
   function fetchTasks() {
     fetch(apiUrl)
