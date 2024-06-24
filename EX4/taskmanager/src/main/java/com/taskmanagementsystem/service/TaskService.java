@@ -19,10 +19,4 @@ public interface TaskService {
 
     void deleteTask(Long id);
 
-    Task getTaskById(Long id);
-
-    List<Task> findTasksByStatus(Task.TaskStatus status);
-
-    List<Task> findTasksCreatedAfter(LocalDate date);
-
 }

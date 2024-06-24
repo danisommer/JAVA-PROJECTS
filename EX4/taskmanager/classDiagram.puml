@@ -2,10 +2,10 @@
 
 package "com.taskmanagementsystem" {
     class TaskManagementSystemApplication
+}
 
-    class WebConfig {
-        + void addCorsMappings(CorsRegistry)
-    }
+package "com.taskmanagementsystem.repository" {
+    interface TaskRepository
 }
 
 package "com.taskmanagementsystem.controller" {
@@ -22,6 +22,12 @@ package "com.taskmanagementsystem.controller" {
     }
 }
 
+package "com.taskmanagementsystem.config"{
+    class WebConfig {
+        + void addCorsMappings(CorsRegistry)
+    }
+}
+
 package "com.taskmanagementsystem.service" {
     interface TaskService {
         + List<Task> getAllTasks()
@@ -29,9 +35,6 @@ package "com.taskmanagementsystem.service" {
         + Task updateTask(Long id, Task task)
         + Task updateTaskStatus(Long id, Task task)
         + void deleteTask(Long id)
-        + Task getTaskById(Long id)
-        + List<Task> findTasksByStatus(Task.TaskStatus status)
-        + List<Task> findTasksCreatedAfter(LocalDate date)
     }
 
     class TaskServiceImpl {
@@ -42,9 +45,6 @@ package "com.taskmanagementsystem.service" {
         + Task updateTask(Long id, Task task)
         + Task updateTaskStatus(Long id, Task task)
         + void deleteTask(Long id)
-        + Task getTaskById(Long id)
-        + List<Task> findTasksByStatus(Task.TaskStatus status)
-        + List<Task> findTasksCreatedAfter(LocalDate date)
         - boolean isWeekday(LocalDate date)
         - boolean isOlderThanFiveDays(LocalDate createdAt)
         - void sendTaskReminderNotification(Task task)
@@ -77,6 +77,6 @@ TaskService <|.. TaskServiceImpl
 TaskController --> TaskService
 TaskServiceImpl --> EmailService
 TaskManagementSystemApplication --> TaskController
-WebConfig --> TaskController
+TaskRepository --> TaskServiceImpl
 
 @enduml

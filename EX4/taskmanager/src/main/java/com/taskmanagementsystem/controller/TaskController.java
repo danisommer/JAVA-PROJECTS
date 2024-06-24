@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
-import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -39,11 +38,6 @@ public class TaskController {
     @GetMapping
     public List<Task> getAllTasks() {
         return taskService.getAllTasks();
-    }
-
-    @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable Long id) {
-        return taskService.getTaskById(id);
     }
 
     @PostMapping
@@ -86,13 +80,4 @@ public class TaskController {
         }
     }
 
-    @GetMapping("/status/{status}")
-    public List<Task> findTasksByStatus(@PathVariable Task.TaskStatus status) {
-        return taskService.findTasksByStatus(status);
-    }
-
-    @GetMapping("/createdAfter/{date}")
-    public List<Task> findTasksCreatedAfter(@PathVariable LocalDate date) {
-        return taskService.findTasksCreatedAfter(date);
-    }
 }

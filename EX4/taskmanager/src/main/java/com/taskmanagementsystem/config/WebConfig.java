@@ -1,4 +1,4 @@
-package com.taskmanagementsystem.controller;
+package com.taskmanagementsystem.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

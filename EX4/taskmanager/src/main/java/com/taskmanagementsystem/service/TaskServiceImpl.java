@@ -112,23 +112,6 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
-    @Override
-    public Task getTaskById(Long id) {
-        return taskRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Task not found with ID: " + id));
-    }
-
-    @Override
-    public List<Task> findTasksByStatus(Task.TaskStatus status) {
-        return taskRepository.findByStatus(status);
-    }
-
-    @Override
-    public List<Task> findTasksCreatedAfter(LocalDate date) {
-        return taskRepository.findByCreatedAtAfter(date);
-    }
-
-
     private boolean isWeekday(LocalDate date) {
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         return !(dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY);
