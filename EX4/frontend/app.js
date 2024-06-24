@@ -263,8 +263,16 @@ document.addEventListener("DOMContentLoaded", function () {
       cancelEditTask();
     });
   }
-  
 
+  function updateFiltersAndSearch() {
+    if(filterApplied) {
+      handleFilterOptions();
+    }
+    else {
+      handleSearchInput();
+    }
+  }
+  
   function confirmEditTask(index, taskId) {
     const title = document.getElementById("editTitle").value;
     const description = document.getElementById("editDescription").value;
@@ -291,17 +299,13 @@ document.addEventListener("DOMContentLoaded", function () {
         return response.json();
       })
       .then((data) => {
-        tasks[index] = { ...tasks[index], title, description }; 
-        editIndex = null; 
-        if (searchTerm.length === 0) {
-          renderTaskList();
-        } else {
-          const filteredTasks = filterTasks(searchTerm);
-          renderTaskList(filteredTasks);
-        }
+        tasks[index] = { ...tasks[index], title, description };
+        editIndex = null;
+        updateFiltersAndSearch();
       })
       .catch((error) => displayError(error.message));
   }
+
   
   function cancelEditTask() {
     editIndex = null;
@@ -346,10 +350,11 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then((data) => {
         tasks[index].status = newStatus;
-        renderTaskList(filterTasks(searchTerm));
+        updateFiltersAndSearch();
       })
       .catch((error) => displayError(error.message));
   }
+  
   
 
 
