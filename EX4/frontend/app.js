@@ -1,3 +1,16 @@
+/*============================================================================*/
+/* Task Management System                                                     */
+/*----------------------------------------------------------------------------*/
+/* Author: Daniel Zaki Sommer                                                 */
+/* Github: https://github.com/danisommer                                      */
+/* Telephone: +55 (41) 99708-5707                                             */
+/* Email: danielsommer@alunos.utfpr.edu.br                                    */
+/* LinkedIn: www.linkedin.com/in/danisommer                                   */
+/*============================================================================*/
+/*  This program manages tasks, allowing filtering by status, date range, and */
+/* search term.                                                               */
+/*============================================================================*/
+
 document.addEventListener("DOMContentLoaded", function () {
   const taskForm = document.getElementById("taskForm");
   const taskList = document.getElementById("taskList");
@@ -5,6 +18,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const pageSelector = document.getElementById("pageSelector");
   const apiUrl = "http://localhost:8080/api/tasks";
   const tasksPerPage = 5;
+  const dateOptions = { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'UTC' };
+
+  document.getElementById('filterButton').addEventListener('click', function() {
+    var filterOptions = document.getElementById('filterOptions');
+    if (filterOptions.style.display === 'none' || filterOptions.style.display === '') {
+        filterOptions.style.display = 'block';
+    } else {
+        filterOptions.style.display = 'none';
+    }
+  });
 
   let currentPage = 1;
   let tasks = [];
@@ -31,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const globalIndex = searchTerm.length === 0 ? startIndex + localIndex : tasks.indexOf(task);
   
       const li = document.createElement("li");
-      const formattedDate = new Date(task.createdAt).toLocaleDateString();
+      const formattedDate = new Date(task.createdAt).toLocaleDateString(undefined, dateOptions);;
       li.innerHTML = `
         <div>
           <strong>${task.title}</strong> - ${task.description}

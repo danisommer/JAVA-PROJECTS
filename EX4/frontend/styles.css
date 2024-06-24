@@ -1,3 +1,16 @@
+/*============================================================================*/
+/* Task Management System                                                     */
+/*----------------------------------------------------------------------------*/
+/* Author: Daniel Zaki Sommer                                                 */
+/* Github: https://github.com/danisommer                                      */
+/* Telephone: +55 (41) 99708-5707                                             */
+/* Email: danielsommer@alunos.utfpr.edu.br                                    */
+/* LinkedIn: www.linkedin.com/in/danisommer                                   */
+/*============================================================================*/
+/*  This program manages tasks, allowing filtering by status, date range, and */
+/* search term.                                                               */
+/*============================================================================*/
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
@@ -6,13 +19,58 @@ body {
 }
 
 .container {
-    max-width: 800px;
-    margin: 20px auto;
-    background-color: #fff;
+    position: relative;
+    margin: 50px auto;
+    max-width: 600px;
     padding: 20px;
-    border-radius: 8px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
+.searchContainer {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.filter-options {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    z-index: 1000;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    display: none;
+    text-align: center;
+
+}
+
+
+.filter-options.active {
+    display: block;
+}
+
+#applyFilter{
+    margin-top: 10px; 
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #4c57af;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+
+}
+
+#applyFilter:hover {
+    background-color: #454ca0;
+    transform: scale(1.05);
+}
+
 
 h1 {
     text-align: center;
@@ -78,10 +136,13 @@ form button {
     height: 40px;
     white-space: nowrap;
     text-align: center;
+    transition: transform 0.2s ease;
 }
 
 form button:hover {
     background-color: #454ca0;
+    transform: scale(1.05);
+
 }
 
 ul {

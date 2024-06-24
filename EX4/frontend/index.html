@@ -1,3 +1,18 @@
+<!--
+============================================================================
+ Task Management System
+----------------------------------------------------------------------------
+Author: Daniel Zaki Sommer                                                 
+Github: https://github.com/danisommer                                      
+Telephone: +55 (41) 99708-5707                                             
+Email: danielsommer@alunos.utfpr.edu.br                                    
+LinkedIn: www.linkedin.com/in/danisommer                                   
+============================================================================
+ This program manages tasks, allowing filtering by status, date range, and
+ search term.
+============================================================================
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +28,6 @@
         <div class="searchContainer">
             <input type="text" id="searchInput" placeholder="Search tasks...">
             
-            <!--
             <button id="filterButton">Filter</button>
             <div id="filterOptions" class="filter-options">
                 <label for="statusFilter">Status:</label>
@@ -29,7 +43,6 @@
                 <input type="date" id="endDate">
                 <button id="applyFilter">Apply</button>
             </div>
-            -->
         </div>
         <form id="taskForm">
             <input type="text" id="title" placeholder="Enter task title" required>
@@ -38,7 +51,6 @@
         </form>
         <div id="pageSelector"></div>
         <div id="errorContainer" style="display:none; color:red;"></div>
-
 
         <ul id="taskList"></ul>
     </div>
