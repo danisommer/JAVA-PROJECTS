@@ -1,23 +1,11 @@
-/*============================================================================*/
-/* Task Management System                                                     */
-/*----------------------------------------------------------------------------*/
-/* Author: Daniel Zaki Sommer                                                 */
-/* Github: https://github.com/danisommer                                      */
-/* Telephone: +55 (41) 99708-5707                                             */
-/* Email: danielsommer@alunos.utfpr.edu.br                                    */
-/* LinkedIn: www.linkedin.com/in/danisommer                                   */
-/*============================================================================*/
-/*  This program manages tasks, allowing filtering by status, date range, and */
-/* search term.                                                               */
-/*============================================================================*/
-
-
 document.addEventListener("DOMContentLoaded", function () {
+  // task form and list
   const taskForm = document.getElementById("taskForm");
   const taskList = document.getElementById("taskList");
   const searchInput = document.getElementById("searchInput");
   const pageSelector = document.getElementById("pageSelector");
 
+  // filtering options
   const filterStatus = document.getElementById("statusFilter");
   const filterStartDate = document.getElementById("startDate");
   const filterEndDate = document.getElementById("endDate");
@@ -43,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let searchTerm = "";
   let filterApplied = false;
 
-
+  // function to render the task list based on current state
   function renderTaskList(filteredTasks) {
     taskList.innerHTML = "";
     pageSelector.innerHTML = "";
@@ -51,15 +39,17 @@ document.addEventListener("DOMContentLoaded", function () {
     
     let startIndex = (currentPage - 1) * tasksPerPage;
     let tasksToDisplay = [];
-    
+
+    // decide whether to show filtered tasks or paginated tasks
     if (searchTerm.length === 0 && !filterApplied) {
       let endIndex = startIndex + tasksPerPage;
       tasksToDisplay = tasks.slice(startIndex, endIndex);
-      renderPaginationControls();
+      renderPaginationControls(); // render pagination buttons only when showing all tasks
     } else {
       tasksToDisplay = filteredTasks;
     }
   
+    // loop through each task and create the corresponding elements
     tasksToDisplay.forEach((task, localIndex) => {
       const globalIndex = tasks.indexOf(task);
     
@@ -80,43 +70,43 @@ document.addEventListener("DOMContentLoaded", function () {
     
       const buttonContainer = document.createElement("div");
       buttonContainer.classList.add("button-container");
-  
+
       if (task.status === "PENDING") {
         const startButton = document.createElement("button");
         startButton.textContent = "Start Task";
         startButton.className = "start-button";
         startButton.addEventListener("click", (e) => {
           e.stopPropagation();
-          toggleStatus(globalIndex, task.id, "PENDING");
+          toggleStatus(globalIndex, task.id, "PENDING"); // change status on click
         });
         buttonContainer.appendChild(startButton);
-  
+
         const editButton = document.createElement("button");
         editButton.textContent = "Edit";
         editButton.className = "edit-button";
         editButton.addEventListener("click", (e) => {
           e.stopPropagation();
-          startEditTask(globalIndex, task);
+          startEditTask(globalIndex, task); // start editing the task
         });
         buttonContainer.appendChild(editButton);
-  
+
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete";
         deleteButton.className = "delete-button";
         deleteButton.addEventListener("click", (e) => {
           e.stopPropagation();
-          deleteTask(globalIndex, task.id);
+          deleteTask(globalIndex, task.id); // delete the task
         });
         buttonContainer.appendChild(deleteButton);
       }
-  
+
       if (task.status === "IN_PROGRESS") {
         const completeCheckbox = document.createElement("input");
         completeCheckbox.type = "checkbox";
         completeCheckbox.className = "complete-checkbox";
         completeCheckbox.addEventListener("change", (e) => {
           e.stopPropagation();
-          toggleStatus(globalIndex, task.id, "IN_PROGRESS");
+          toggleStatus(globalIndex, task.id, "IN_PROGRESS"); // mark as completed
         });
         buttonContainer.appendChild(completeCheckbox);
       }
@@ -125,8 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
       taskList.appendChild(li);
     });
   }
-  
-  
+
   function renderPaginationControls() {
     const totalPages = Math.ceil(tasks.length / tasksPerPage);
 
@@ -180,6 +169,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // function to handle filter options and apply them to the task list
   function handleFilterOptions() {
     const status = filterStatus.value;
     const startDate = filterStartDate.value ? new Date(filterStartDate.value) : null;
@@ -197,7 +187,6 @@ document.addEventListener("DOMContentLoaded", function () {
       if (startDate) {
         filteredTasks = filterByPeriod(filteredTasks, startDate, null);
       }
-  
       if (endDate) {
         filteredTasks = filterByPeriod(filteredTasks, null, endDate);
       }
@@ -206,12 +195,12 @@ document.addEventListener("DOMContentLoaded", function () {
     renderTaskList(filteredTasks);
   }
 
-
   filterApply.addEventListener("click", function() {
     filterApplied = true;
     handleFilterOptions();
   });
 
+  // function to handle search input and filter tasks
   function handleSearchInput() {
     searchTerm = searchInput.value.trim();
 
@@ -272,7 +261,8 @@ document.addEventListener("DOMContentLoaded", function () {
       handleSearchInput();
     }
   }
-  
+
+  // function to confirm update a task on the server
   function confirmEditTask(index, taskId) {
     const title = document.getElementById("editTitle").value;
     const description = document.getElementById("editDescription").value;
@@ -306,7 +296,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((error) => displayError(error.message));
   }
 
-  
   function cancelEditTask() {
     editIndex = null;
     if (searchTerm.length === 0) {
@@ -317,6 +306,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  // function to toggle the status of a task
   function toggleStatus(index, taskId, currentStatus) {
     if (editIndex !== null) return;
   
@@ -350,11 +340,12 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .then((data) => {
         tasks[index].status = newStatus;
-        updateFiltersAndSearch();
+        updateFiltersAndSearch(); 
       })
       .catch((error) => displayError(error.message));
   }
   
+  // function to fetch all the tasks from the server
   function fetchTasks() {
     fetch(apiUrl)
       .then((response) => response.json())
@@ -430,6 +421,5 @@ document.addEventListener("DOMContentLoaded", function () {
     errorContainer.textContent = message;
     errorContainer.style.display = "block";
   }
-
   fetchTasks();
 });
